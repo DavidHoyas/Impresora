@@ -5,7 +5,8 @@ import java.net.Socket;
 
 public class ClienteHandler implements Runnable {
 
-    private Socket socket;
+    private final Socket socket;
+    private final Impresora impresora;
 
     public static final String MSG_KO = "KO";
     public static final int PARTES_ESPERADAS = 2;
@@ -14,16 +15,15 @@ public class ClienteHandler implements Runnable {
     public static final int INDEX_TIPO = 0;
     public static final int INDEX_HOJAS = 1;
 
-    public ClienteHandler(Socket socket) {
+    public ClienteHandler(Socket socket, Impresora impresora) {
         this.socket = socket;
+        this.impresora = impresora;
     }
 
     @Override
     public void run() {
         try {
 
-            Impresora impresora = new Impresora();
-            
             String peticion = Conexion.recibir(socket);
             String[] partes = peticion.split(SPLITTER);
 
@@ -50,4 +50,5 @@ public class ClienteHandler implements Runnable {
         }
     }
 }
+
 

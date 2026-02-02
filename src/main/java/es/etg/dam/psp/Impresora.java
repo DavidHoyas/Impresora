@@ -2,63 +2,60 @@ package es.etg.dam.psp;
 
 public class Impresora {
 
-    private static final int HOJAS_BN_INICIAL = 50;
-    private static final int HOJAS_COLOR_INICIAL = 20;
+    public static final int PRECIO_BN = 1;
+    public static final int PRECIO_COLOR = 2;
 
-    private static final int PRECIO_BN = 1;
-    private static final int PRECIO_COLOR = 2;
+    public static final String TIPO_BN = "BN";
+    public static final String TIPO_COLOR = "COLOR";
 
-    private static final String TIPO_BN = "BN";
-    private static final String TIPO_COLOR = "COLOR";
+    public static final String MSG_OK = "OK %d euros | Hojas restantes: BN=%d, COLOR=%d";
+    public static final String MSG_KO = "KO | Hojas restantes: BN=%d, COLOR=%d";
 
-    private static final String MSG_OK = "OK %d euros | Hojas restantes: BN=%d, COLOR=%d";
-    private static final String MSG_KO = "KO | Hojas restantes: BN=%d, COLOR=%d";
+    private final Tinta tinta;
 
-    private static int hojasBN;
-    private static int hojasColor;
-
-    public Impresora() {
-        hojasBN = HOJAS_BN_INICIAL;
-        hojasColor = HOJAS_COLOR_INICIAL;
+    public Impresora(Tinta tinta) {
+        this.tinta = tinta;
     }
 
-    public synchronized String imprimir(String tipo, int hojas) {
+    public String imprimir(String tipo, int hojas) {
 
-        switch (tipo.toUpperCase()) {
-            case TIPO_BN:
-                return imprimirBlancoNegro(hojas);
+        return switch (tipo.toUpperCase()) {
 
-            case TIPO_COLOR:
-                return imprimirColor(hojas);
-
-            default:
-                return String.format(MSG_KO, hojasBN, hojasColor);
-        }
+            case TIPO_BN -> imprimirBN(hojas);
+            case TIPO_COLOR -> imprimirColor(hojas);
+            default -> String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
+        };
     }
 
-    private String imprimirBlancoNegro(int hojas) {
-        if (hojasBN >= hojas) {
-            hojasBN -= hojas;
-            int precio = calcularPrecio(PRECIO_BN, hojas);
-            return String.format(MSG_OK, precio, hojasBN, hojasColor);
-        } else {
-            return String.format(MSG_KO, hojasBN, hojasColor);
+    private String imprimirBN(int hojas) {
+
+        boolean exito = tinta.consumirBN(hojas);
+
+        if (!exito) {
+            return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
         }
+
+        int precio = calcularPrecio(PRECIO_BN, hojas);
+        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
     }
 
     private String imprimirColor(int hojas) {
-        if (hojasColor >= hojas) {
-            hojasColor -= hojas;
-            int precio = calcularPrecio(PRECIO_COLOR, hojas);
-            return String.format(MSG_OK, precio, hojasBN, hojasColor);
-        } else {
-            return String.format(MSG_KO, hojasBN, hojasColor);
+
+        boolean exito = tinta.consumirColor(hojas);
+
+        if (!exito) {
+            return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
         }
+
+        int precio = calcularPrecio(PRECIO_COLOR, hojas);
+        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
     }
 
-    private static int calcularPrecio(int precio, int hojas) {
-        return precio * hojas;
+    private static int calcularPrecio(int precioHoja, int hojas) {
+        return precioHoja * hojas;
     }
 }
+
+
 
 
