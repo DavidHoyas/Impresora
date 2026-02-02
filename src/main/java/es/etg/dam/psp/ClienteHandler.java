@@ -35,7 +35,7 @@ public class ClienteHandler implements Runnable {
             String tipo = partes[INDEX_TIPO];
             int hojas = Integer.parseInt(partes[INDEX_HOJAS]);
 
-            String respuesta = impresora.imprimir(tipo, hojas);
+            String respuesta = impresora.imprimir(tipo.toUpperCase(), hojas);
 
             Conexion.enviar(respuesta, socket);
 

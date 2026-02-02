@@ -19,51 +19,34 @@ public class Impresora {
 
     public String imprimir(String tipo, int hojas) {
 
-        return switch (tipo.toUpperCase()) {
+        boolean exito;
 
-            case TIPO_BN -> imprimirBN(hojas);
-            case TIPO_COLOR -> imprimirColor(hojas);
-            default -> String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
-        };
-    }
-
-    public String imprimirBN(int hojas) {
-
-        boolean exito = tinta.consumirBN(hojas);
-
-        if (!exito) {
-            return enviarError();
+        if (tipo == TIPO_BN) {
+            exito = imprimirBN(hojas);
+        } else if (tipo == TIPO_COLOR) {
+            exito = imprimirColor(hojas);
+        } else {
+            exito = false;
         }
 
-        int precio = calcularPrecio(PRECIO_BN, hojas);
-        return enviarExito(precio);
+        String msg = exito
+                ? String.format(MSG_OK, tinta.getHojasBN(), tinta.getHojasColor())
+                : String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
+
+        return msg;
     }
 
-    public String imprimirColor(int hojas) {
+    public Boolean imprimirBN(int hojas) {
 
-        boolean exito = tinta.consumirColor(hojas);
+        return tinta.consumirBN(hojas);
+    }
 
-        if (!exito) {
-            return enviarError();
-        }
+    public Boolean imprimirColor(int hojas) {
 
-        int precio = calcularPrecio(PRECIO_COLOR, hojas);
-        return enviarExito(precio);
+        return tinta.consumirColor(hojas);
     }
 
     public int calcularPrecio(int precioHoja, int hojas) {
         return precioHoja * hojas;
     }
-
-    public String enviarError(){
-        return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
-    }
-
-    public String enviarExito(int precio){
-        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
-    }
 }
-
-
-
-
