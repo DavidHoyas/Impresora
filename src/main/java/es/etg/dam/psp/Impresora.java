@@ -27,32 +27,40 @@ public class Impresora {
         };
     }
 
-    private String imprimirBN(int hojas) {
+    public String imprimirBN(int hojas) {
 
         boolean exito = tinta.consumirBN(hojas);
 
         if (!exito) {
-            return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
+            return enviarError();
         }
 
         int precio = calcularPrecio(PRECIO_BN, hojas);
-        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
+        return enviarExito(precio);
     }
 
-    private String imprimirColor(int hojas) {
+    public String imprimirColor(int hojas) {
 
         boolean exito = tinta.consumirColor(hojas);
 
         if (!exito) {
-            return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
+            return enviarError();
         }
 
         int precio = calcularPrecio(PRECIO_COLOR, hojas);
-        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
+        return enviarExito(precio);
     }
 
-    private static int calcularPrecio(int precioHoja, int hojas) {
+    public int calcularPrecio(int precioHoja, int hojas) {
         return precioHoja * hojas;
+    }
+
+    public String enviarError(){
+        return String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
+    }
+
+    public String enviarExito(int precio){
+        return String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor());
     }
 }
 
