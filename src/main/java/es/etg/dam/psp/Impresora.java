@@ -2,14 +2,16 @@ package es.etg.dam.psp;
 
 public class Impresora {
 
-    public static final int PRECIO_BN = 1;
-    public static final int PRECIO_COLOR = 2;
+    public static final double PRECIO_BN = 0.5;
+    public static final double PRECIO_COLOR = 1.0;
 
     public static final String TIPO_BN = "BN";
     public static final String TIPO_COLOR = "COLOR";
 
-    public static final String MSG_OK = "OK %d euros | Hojas restantes: BN=%d, COLOR=%d";
-    public static final String MSG_KO = "KO | Hojas restantes: BN=%d, COLOR=%d";
+    public static final String MSG_OK =
+            "OK %.2f euros | Hojas restantes: BN=%d, COLOR=%d";
+    public static final String MSG_KO =
+            "KO | Hojas restantes: BN=%d, COLOR=%d";
 
     private final Tinta tinta;
 
@@ -19,34 +21,32 @@ public class Impresora {
 
     public String imprimir(String tipo, int hojas) {
 
-        boolean exito;
+        boolean exito = false;
+        double precio = 0.0;
 
-        if (tipo == TIPO_BN) {
+        if (TIPO_BN.equals(tipo)) {
             exito = imprimirBN(hojas);
-        } else if (tipo == TIPO_COLOR) {
+            precio = calcularPrecio(PRECIO_BN, hojas);
+
+        } else if (TIPO_COLOR.equals(tipo)) {
             exito = imprimirColor(hojas);
-        } else {
-            exito = false;
+            precio = calcularPrecio(PRECIO_COLOR, hojas);
         }
 
-        String msg = exito
-                ? String.format(MSG_OK, tinta.getHojasBN(), tinta.getHojasColor())
+        return exito
+                ? String.format(MSG_OK, precio, tinta.getHojasBN(), tinta.getHojasColor())
                 : String.format(MSG_KO, tinta.getHojasBN(), tinta.getHojasColor());
-
-        return msg;
     }
 
-    public Boolean imprimirBN(int hojas) {
-
+    private boolean imprimirBN(int hojas) {
         return tinta.consumirBN(hojas);
     }
 
-    public Boolean imprimirColor(int hojas) {
-
+    private boolean imprimirColor(int hojas) {
         return tinta.consumirColor(hojas);
     }
 
-    public int calcularPrecio(int precioHoja, int hojas) {
+    private double calcularPrecio(double precioHoja, int hojas) {
         return precioHoja * hojas;
     }
 }

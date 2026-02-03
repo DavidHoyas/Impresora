@@ -29,7 +29,6 @@ public class ClienteHandler implements Runnable {
 
             if (partes.length != PARTES_ESPERADAS) {
                 Conexion.enviar(MSG_KO, socket);
-                return;
             }
 
             String tipo = partes[INDEX_TIPO];

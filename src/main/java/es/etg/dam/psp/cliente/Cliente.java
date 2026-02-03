@@ -17,7 +17,6 @@ public class Cliente {
 
         if (args.length != 1) {
             System.out.println(MSG_USO);
-            return;
         }
 
         String peticion = args[INDEX_PETICION].trim();
